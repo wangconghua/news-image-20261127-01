@@ -12,6 +12,9 @@ from pathlib import Path
 
 SOURCE_NAME = "entry.png"
 
+# Competition cap: the entry image must be at most 1 MiB.
+MAX_BYTES = 1_048_576
+
 
 def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -38,6 +41,12 @@ def main() -> int:
 
     if not data:
         return fail(f"source image is empty, refusing to copy: {source}")
+
+    if len(data) > MAX_BYTES:
+        return fail(
+            f"source image is {len(data)} bytes, over the "
+            f"{MAX_BYTES} byte limit: {source}"
+        )
 
     source_hash = sha256_hex(data)
 
